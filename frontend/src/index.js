@@ -1,24 +1,13 @@
 import React from 'react';
-import thunkMiddleware from 'redux-thunk';
-import { createLogger } from 'redux-logger';
 import ReactDOM from 'react-dom';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
-import { createStore, applyMiddleware } from 'redux';
+import configureStore from './store/store';
 import { Provider } from 'react-redux';
-import { user } from './store/reducers/authReducers';
-
-const loggerMiddleware = createLogger();
-
-const store = createStore(
-  user,
-  applyMiddleware(
-    thunkMiddleware,
-    loggerMiddleware
-  )
-);
 
 // store.dispatch(loginUserAsync({email:'parasdhiman@gmail.com',password:'123456'}));
+
+const store = configureStore();
 
 ReactDOM.render(
   <React.StrictMode>

@@ -9,3 +9,16 @@ export function loginUser(json){
     }
   }
 }
+
+export function fetchProducts(){
+  return {
+    type:ActionTypes.FETCH_PRODUCTS
+  }
+}
+
+export function setProducts(products){
+  return {
+    type:ActionTypes.FETCH_DONE,
+    products
+  }
+}
