@@ -2,8 +2,16 @@ import React from 'react';
 
 class AddProduct extends React.Component{
 
+  constructor(props){
+    super(props);
+    this.state={
+      adding:false
+    }
+  }
+
   async handleSubmit(e){
     e.preventDefault();
+    this.setState({adding:true});
     const product = {};
     const form = document.forms['newProduct'];
     product.name = form.name.value;
@@ -17,12 +25,15 @@ class AddProduct extends React.Component{
     product.availability = form.availability.value==='available'?true:false;
     product.price = parseFloat(form.price.value);
     product.quantity = parseInt(form.quantity.value);
-    await fetch('/users/admin/productList/createProduct',{
+    await fetch('/users/productList/createProduct',{
       method:'post',
       headers:{
         'Content-Type':'application/json'
       },
       body:JSON.stringify(product)
+    });
+    this.setState({
+      adding:false,
     });
     this.props.history.push('/products');
   }
@@ -60,7 +71,11 @@ class AddProduct extends React.Component{
 
         <label>Quantity</label>
         <input required type='number' min={0} name='quantity'/> <br/>
-        <button type='submit'>Add Product</button>
+        {
+          this.state.adding?
+          <button type='submit' disabled>Add Product</button>:
+          <button type='submit'>Add Product</button>
+        }
       </form>
     )
   }

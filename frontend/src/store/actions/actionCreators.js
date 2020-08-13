@@ -22,3 +22,10 @@ export function setProducts(products){
     products
   }
 }
+
+export function deleteProduct(productId){
+  return {
+    type:ActionTypes.DELETE_PRODUCT,
+    productId,
+  }
+}

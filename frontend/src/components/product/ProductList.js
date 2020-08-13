@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-const ProductList = ({ products }) => {
+const ProductList = ({ products,deleteProduct }) => {
   return (
     <table>
       <thead>
@@ -18,7 +18,7 @@ const ProductList = ({ products }) => {
       <tbody>
         {
           products.map(product=>(
-            <tr key={product.name}>
+            <tr key={product.productId}>
               <td>{ product.productId }</td>
               <td>{ product.name }</td>
               <td>{ product.availability?"YES":"NO" }</td>
@@ -27,7 +27,7 @@ const ProductList = ({ products }) => {
               <td>{ product.category.reduce((acc,catg)=>acc+catg+' ',"") }</td>
               <td> 
                 <Link to={`/${product.productId}`} >Edit</Link>
-                <button>Delete</button>
+                <button onClick={() => deleteProduct(product.productId)}>Delete</button>
               </td>
             </tr>
           ))

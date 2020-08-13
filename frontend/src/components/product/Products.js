@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { fetchProducts } from '../../store/actions/actionCreators'
+import { fetchProducts, deleteProduct } from '../../store/actions/actionCreators'
 import ProductList from './ProductList';
 import SortByPrice from './SortByPrice';
 import SearchByName from './SearchByName';
@@ -16,6 +16,7 @@ class Products extends React.Component{
     }
     this.filterByName = this.filterByName.bind(this);
     this.applyFilters = this.applyFilters.bind(this);
+    this.deleteProduct = this.deleteProduct.bind(this);
   }
 
   onSortChange(e){
@@ -73,6 +74,14 @@ class Products extends React.Component{
     })
   }
 
+  deleteProduct(productId){
+    const del = window.confirm(`Are you sure you want to delete the product with id ${productId}`);
+    if(!del){
+      return;
+    }
+    this.props.deleteProduct(productId);
+  }
+
   render(){
     const { products } = this.state;
     return (
@@ -81,7 +90,7 @@ class Products extends React.Component{
         <SearchByName filterByName = {this.filterByName} />
         <Filter applyFilters={this.applyFilters} />
         <Link to='/addproduct' >Add Product</Link>
-        <ProductList products = {products} />
+        <ProductList deleteProduct = {this.deleteProduct} products = {products} />
       </>
     );
   }
@@ -95,7 +104,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    fetchProducts: () => dispatch(fetchProducts())
+    fetchProducts: () => dispatch(fetchProducts()),
+    deleteProduct: productId => dispatch(deleteProduct(productId))
   } 
 }
 
