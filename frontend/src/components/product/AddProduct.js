@@ -1,4 +1,5 @@
 import React from 'react';
+import './productForm.css';
 
 class AddProduct extends React.Component{
 
@@ -28,7 +29,8 @@ class AddProduct extends React.Component{
     await fetch('/users/productList/createProduct',{
       method:'post',
       headers:{
-        'Content-Type':'application/json'
+        'Content-Type':'application/json',
+        'Authorization':localStorage.getItem('auth-token')
       },
       body:JSON.stringify(product)
     });
@@ -49,27 +51,29 @@ class AddProduct extends React.Component{
 
   render(){
     return (
-      <form name='newProduct' onSubmit={e=>this.handleSubmit(e)}>
-        <label htmlFor='name'>Name</label>
+      <form className='productForm' name='newProduct' onSubmit={e=>this.handleSubmit(e)}>
+        <h2>Add Product</h2>
+        <label htmlFor='name'>Name</label><br/>
         <input required type='text' name='name' id='name'/>
         <br />
 
         <label>Categories</label>
         <br />
         { this.categories.map(category => (
-          <label key={category}><input type='checkbox' name={category} id={category} value={category}/>{category}</label>
+          <label style={{fontWeight:'normal'}} key={category}><input type='checkbox' name={category} id={category} value={category}/>{category}</label>
         ))}
 
         <br/>
+        <br/>
 
         <label htmlFor='availability'>Availability</label> <br/>
-        <input type='radio' name='availability' value='available' defaultChecked /> Available <br/>
-        <input type='radio' name='availability' value='unavailable' /> Unavailable <br/>
+        <label style={{fontWeight:'normal'}}><input type='radio' name='availability' value='available' defaultChecked /> Available</label> <br/>
+        <label style={{fontWeight:'normal'}}><input type='radio' name='availability' value='unavailable' /> Unavailable</label> <br/> <br/>
 
-        <label>Price</label>
+        <label>Price</label><br/>
         <input required type='number' step='any' min={0} name='price'/> <br/>
 
-        <label>Quantity</label>
+        <label>Quantity</label><br/>
         <input required type='number' min={0} name='quantity'/> <br/>
         {
           this.state.adding?

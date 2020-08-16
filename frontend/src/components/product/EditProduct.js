@@ -4,11 +4,19 @@ import { connect } from 'react-redux';
 class EditProduct extends React.Component{
   constructor(props){
     super(props);
+    console.log(props);
     this.state= {
-      product:props.products.find(product => product.productId === props.match.params.id),
+      product:props.products.length===0?undefined:props.products.find(product => product.productId === props.match.params.id),
       editing:false
     }
-    console.log(this.state);
+  }
+
+  componentDidUpdate(prevState){
+    if(prevState.products.length === 0 && this.props.products !== {}){
+      this.setState({
+        product : this.props.products.find(product => product.productId === this.props.match.params.id)
+      })
+    }
   }
 
   categories = [
@@ -54,7 +62,8 @@ class EditProduct extends React.Component{
     await fetch('/users/productList/updateProduct',{
       method:'put',
       headers:{
-        'Content-Type':'application/json'
+        'Content-Type':'application/json',
+        'Authorization':localStorage.getItem('auth-token')
       },
       body:JSON.stringify(product)
     })
@@ -63,40 +72,46 @@ class EditProduct extends React.Component{
 
   render(){
     return (
-      <form name='editProduct' onSubmit={e=>this.handleSubmit(e)}>
-        <label htmlFor='name'>Name</label>
-        <input required onChange={e=>this.handleChange(e)} type='text' value={this.state.product.name} name='name' id='name'/>
+      <form className='productForm' name='editProduct' onSubmit={e=>this.handleSubmit(e)}>
+        <h2>Edit Product</h2>
+        <label htmlFor='name'>Name</label><br/>
+        <input required onChange={e=>this.handleChange(e)} type='text' value={this.state.product?this.state.product.name:''} name='name' id='name'/>
         <br />
 
         <label>Categories</label>
         <br />
         { this.categories.map(category => (
-          <label key={category}>
+          <label style={{fontWeight:'normal'}} key={category}>
             {
+              this.state.product?
               this.state.product.category.includes(category)?
               <input type='checkbox' name={category} defaultChecked id={category} value={category}/>:
-              <input type='checkbox' name={category} id={category} value={category}/>
+              <input type='checkbox' name={category} id={category} value={category}/>:
+              <input type='checkbox' name={category} id={category} value={category} />
             }
             {category}
           </label>
         ))}
 
-        <br/>
+        <br/><br/>
 
         <label htmlFor='availability'>Availability</label> <br/>
         {
+          this.state.product?
           this.state.product.availability?
-          <><input type='radio' name='availability' value='available' defaultChecked /> Available <br/>
-          <input type='radio' name='availability' value='unavailable' /> Unavailable <br/></>:
-          <><input type='radio' name='availability' value='available' /> Available <br/>
-          <input type='radio' name='availability' value='unavailable' defaultChecked /> Unavailable <br/></>
+          <><label style={{fontWeight:'normal'}} ><input type='radio' name='availability' value='available' defaultChecked /> Available</label> <br/>
+          <label style={{fontWeight:'normal'}} ><input type='radio' name='availability' value='unavailable' /> Unavailable</label> <br/></>:
+          <><label style={{fontWeight:'normal'}} ><input type='radio' name='availability' value='available' /> Available</label> <br/>
+          <label style={{fontWeight:'normal'}} ><input type='radio' name='availability' value='unavailable' defaultChecked /> Unavailable</label> <br/></>:
+          <><label style={{fontWeight:'normal'}} ><input type='radio' name='availability' value='available' /> Available</label> <br/>
+          <label style={{fontWeight:'normal'}} ><input type='radio' name='availability' value='unavailable' defaultChecked /> Unavailable </label><br/></>
         }
+        <br/>
+        <label>Price</label><br/>
+        <input required type='number' onChange={e=>this.handleChange(e)} value={this.state.product?this.state.product.price:0} step='any' min={0} name='price'/> <br/>
 
-        <label>Price</label>
-        <input required type='number' onChange={e=>this.handleChange(e)} value={this.state.product.price} step='any' min={0} name='price'/> <br/>
-
-        <label>Quantity</label>
-        <input required type='number' onChange={e=>this.handleChange(e)} value={this.state.product.quantity} min={0} name='quantity'/> <br/>
+        <label>Quantity</label><br/>
+        <input required type='number' onChange={e=>this.handleChange(e)} value={this.state.product?this.state.product.quantity:0} min={0} name='quantity'/> <br/>
         {
           this.state.editing?
           <button type='submit' disabled>Save Product</button>:

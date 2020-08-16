@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import './filter.css';
 
 const state = {
   available:false,
@@ -43,7 +44,7 @@ class CheckBoxes extends React.Component {
 
   render(){ 
     return (
-      <div>
+      <div className='checkboxes'>
         { Object.keys(this.state).map(option=>(
           <label key={option}><input type='checkbox' name={option} checked={this.state[option]} onChange={e=>this.onCheckboxChange(e)} />{option}</label> 
         ))}
@@ -57,12 +58,12 @@ class CheckBoxes extends React.Component {
 const Filter = ({applyFilters}) => {
   const [isShowing,setShowing] = useState(false);
   return (
-    <>
-      <button onClick={()=>{ setShowing(!isShowing); applyFilters(state)}}>Filter</button>
+    <div className='filters'>
+      <button className='filterButton' onClick={()=>{ setShowing(!isShowing); applyFilters(state)}}>Filters &nbsp;{isShowing?<span className="arrow up"></span>:<span className="arrow down"></span>}</button>
       {
         isShowing ? <CheckBoxes applyFilters={applyFilters} toggleShowing = {()=>setShowing(!isShowing)} /> : ""
       }
-    </>
+    </div>
   )
 }
 

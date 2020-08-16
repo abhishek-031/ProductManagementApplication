@@ -6,6 +6,7 @@ import SortByPrice from './SortByPrice';
 import SearchByName from './SearchByName';
 import Filter from './Filter';
 import { Link } from 'react-router-dom';
+import './product.css';
 
 class Products extends React.Component{
 
@@ -86,10 +87,12 @@ class Products extends React.Component{
     const { products } = this.state;
     return (
       <>
-        <SortByPrice onSortChange={(e)=>this.onSortChange(e)} />
-        <SearchByName filterByName = {this.filterByName} />
+        <div className='firstLine'>
+          <SortByPrice onSortChange={(e)=>this.onSortChange(e)} />
+          <SearchByName filterByName = {this.filterByName} />
+          <Link to='/addproduct' >Add Product</Link>
+        </div>
         <Filter applyFilters={this.applyFilters} />
-        <Link to='/addproduct' >Add Product</Link>
         <ProductList deleteProduct = {this.deleteProduct} products = {products} />
       </>
     );

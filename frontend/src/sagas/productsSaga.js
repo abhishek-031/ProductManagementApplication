@@ -2,7 +2,7 @@ import { takeEvery, call, put, all } from 'redux-saga/effects';
 import { FETCH_PRODUCTS, DELETE_PRODUCT } from '../store/actions/actionTypes';
 import fetchProducts from '../api/fetchProducts';
 import deleteProductAsync from '../api/deleteProduct';
-import { setProducts, deleteProduct } from '../store/actions/actionCreators';
+import { setProducts } from '../store/actions/actionCreators';
 
 function* productWorker(){
   const products = yield call(fetchProducts);
@@ -15,7 +15,6 @@ function* productWatcher(){
 
 function* productDeleteWorker(action){
   yield call(deleteProductAsync,action.productId);
-  yield put(deleteProduct(action.productId));
 }
 
 function* productDeleteWatcher(){

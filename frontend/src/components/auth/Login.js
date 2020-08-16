@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { loginUserAsync } from '../../store/reducers/authReducers';
 import { connect } from 'react-redux';
+import './style.css';
 
 class LoginComponent extends Component{
   constructor(props){
@@ -8,7 +9,8 @@ class LoginComponent extends Component{
     this.state = {
       email:'',
       password:'',
-      loading:false
+      loading:false,
+      done:false
     }
     this.handleChange = this.handleChange.bind(this);
   }
@@ -35,28 +37,47 @@ class LoginComponent extends Component{
       loading:true
     });
     e.preventDefault();
-    await this.props.loginUser({
-      email:this.state.email,
-      password:this.state.password
+    const data = await fetch('/auth/signin',{
+      method:'post',
+      headers:{
+        'Content-Type':'application/json'
+      },
+      body:JSON.stringify({
+        username:this.state.email,
+        password:this.state.password
+      })
     });
+    const jsonData = await data.json();
+    if(jsonData.error){
+      alert("Invalid Credentials");
+      this.setState({
+        loading:false,
+      })
+      return;
+    }
+    localStorage.setItem('auth-token',jsonData.token);
     this.setState({
       loading:false,
+      done:true
     });
-    console.log(this.props.user);
   }
 
   render(){
     return (
-      <>
-        {
-          this.state.loading?<h1>Loading...</h1>:
-          <form onSubmit={e=>this.handleSubmit(e)}>
-          <input name='email' placeholder='Email' onChange={this.handleChange} required value={this.state.email} type='email' />
+          <form className='loginForm' onSubmit={e=>this.handleSubmit(e)}>
+          <h1 style={{textAlign:'center'}}>LOGIN</h1>
+          <input name='email' placeholder='Username' onChange={this.handleChange} required value={this.state.email} type='text' />
           <input name='password' placeholder='Password' required onChange={this.handleChange} value={this.state.password} type='password' />
+          {this.state.loading?
+          <button type='submit' disabled>Processig...</button>:
           <button type='submit'>Login</button>
+          }
+          {
+            this.state.done?
+            <p style={{fontSize:'1.2em',textAlign:"center"}}>Successfully logged in <br/><a style={{color:'#444', textDecoration:'underline'}} href='/products'>Click here</a><br/> to proceed.</p>:
+            <p style={{fontSize:'1.2em',textAlign:"center"}}><a style={{color:'#444', textDecoration:'underline'}} href='/signup'>Sign Up</a> if you aren't registerd.</p>
+          }
         </form>
-        }
-      </>
     )
   }
 }

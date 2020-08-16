@@ -1,18 +1,16 @@
 import React, { Component } from 'react';
 import fetch from 'cross-fetch';
+import './style.css';
 
 class SignUp extends Component{
   constructor(){
     super();
     this.state = {
       loading:false,
-      firstName: '',
-      lastName: '',
-      email: '',
-      contactNumber: '',
-      gender: 'Male',
+      username: '',
       password: '',
-      confPassword:''
+      confPassword:'',
+      done:false
     }
     this.handleChange = this.handleChange.bind(this);
   }
@@ -20,12 +18,6 @@ class SignUp extends Component{
   handleChange(e){
     const name = e.target.name;
     let value = e.target.value;
-    if(name==='contactNumber'){
-      const regex = /^[0-9]+$/;
-      console.log(regex.test(value))
-      if(value!=='' && !regex.test(value))
-      return;
-    }
     this.setState({
       [name]:value
     });
@@ -41,14 +33,10 @@ class SignUp extends Component{
       loading:true
     });
     const data = {
-      firstName: this.state.firstName,
-      lastName: this.state.lastName,
-      email: this.state.email,
-      contactNumber: this.state.contactNumber,
-      gender: this.state.gender,
+      username: this.state.username,
       password: this.state.password
     }
-    const response = await fetch('/signup',{
+    const response = await fetch('/auth/signup',{
       method:'post',
       headers:{
         'Content-Type':'application/json'
@@ -56,9 +44,16 @@ class SignUp extends Component{
       body:JSON.stringify(data)
     });
     const json = await response.json();
-    console.log(json);
+    if(json.message === 'Error: Username is already taken!'){
+      alert('Username already exists');
+      this.setState({
+        loading:false
+      })
+      return;
+    }
     this.setState({
-      loading:false
+      loading:false,
+      done:true
     });
   }
 
@@ -66,20 +61,19 @@ class SignUp extends Component{
     return (
       <>
       {
-        this.state.loading?<h1>Loading...</h1>:
-        <form onSubmit={e=>this.handleSubmit(e)}>
-          <input name='firstName' placeholder='First Name' type='text' value={this.state.firstName} required onChange={this.handleChange} /><br />
-          <input name='lastName' placeholder='Last Name' type='text' value={this.state.lastName} onChange={this.handleChange} /><br />
-          <input name='email' placeholder='Email' type='email' value={this.state.email} required onChange={this.handleChange} /><br />
-          <input name='contactNumber' placeholder='Contact number' type='tel' value={this.state.contactNumber} required onChange={this.handleChange} /><br />
-          <select name='gender' placeholder='Gender' type='select' value={this.state.gender} required onChange={this.handleChange} >
-            <option value='Male'>Male</option>
-            <option value='Female'>Female</option>
-            <option value='Other'>Other</option>
-          </select><br />
+        <form className='loginForm' onSubmit={e=>this.handleSubmit(e)}>
+          <h1 style={{textAlign:'center'}}>SignUp</h1>
+          <input name='username' placeholder='User Name' type='text' value={this.state.username} required onChange={this.handleChange} /><br />
           <input name='password' placeholder='Password' type='password' value={this.state.password} required onChange={this.handleChange} /><br />
           <input name='confPassword' placeholder='Confirm Password' type='password' value={this.state.confPassword} required onChange={this.handleChange} /> <br/>
-          <button type='submit'>SignUp</button>
+          { this.state.loading?
+          <button style={{margin:"0 36%"}} type='submit' disabled>Processing...</button>:
+          <button style={{margin:"0 36%"}} type='submit'>SignUp</button>
+          }
+          {this.state.done?
+          <p style={{fontSize:'1.2em',textAlign:"center"}}>Registration successful, <a style={{color:'#444', textDecoration:'underline'}} href='/login'>Login</a>.</p>:
+          <p style={{fontSize:'1.2em',textAlign:"center"}}><a style={{color:'#444', textDecoration:'underline'}} href='/login'>Login</a> if you have already registerd.</p>
+          }
         </form>
       }
       </>

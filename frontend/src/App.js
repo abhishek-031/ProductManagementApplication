@@ -1,23 +1,64 @@
 import React from 'react';
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
 import Login from './components/auth/Login';
 import SignUp from './components/auth/SignUp';
 import Products from './components/product/Products';
 import AddProduct from './components/product/AddProduct';
 import EditProduct from './components/product/EditProduct';
+import Header from './components/Header/Header';
+import { fetchProducts } from './store/actions/actionCreators';
+import { connect } from 'react-redux';
 
-function App() {
-  return (
-    <Router>
-      <Switch>
-        <Route path='/login' exact component={Login} />
-        <Route path='/signup' exact component={SignUp} />
-        <Route path='/products' exact component={Products} />
-        <Route path='/addproduct' exact component={AddProduct} />
-        <Route path='/:id' exact component={EditProduct} />
-      </Switch>
-    </Router>
-  );
+class App extends React.Component {
+
+  constructor(props){
+    super(props);
+    props.fetchProducts();
+  }
+
+  render(){
+    const token = localStorage.getItem('auth-token');
+    let loggedIn;
+    if(token){
+      loggedIn = true;
+    }
+    else{
+      loggedIn=false;
+    }
+    console.log(loggedIn);
+    return (
+      <>
+        <Header />
+        <Router>
+          {
+            loggedIn?
+            <Redirect exact from='' to='/products' />:
+            null
+          }
+          <Switch>
+            <Route exact path='/' component={Login} />
+            <Route exact path='/login'>
+              { loggedIn? <Redirect to='/products' />:<Login />}
+            </Route>
+            <Route exact path='/signup'>
+              { loggedIn? <Redirect to='/products' />:<SignUp />}
+            </Route>
+            <Route path='/products' exact>
+              { loggedIn? <Products />: <Redirect to='/login' />}
+            </Route>
+            <Route path='/addproduct' exact>
+              { loggedIn ? <AddProduct/>: <Redirect to='/login' />}
+            </Route>
+            <Route path='/:id' exact component={EditProduct} />
+          </Switch>
+        </Router>
+      </>
+    );
+  }
 }
 
-export default App;
+const mapDispatchToProps = dispatch => ({
+  fetchProducts : () => dispatch(fetchProducts())
+})
+
+export default connect(null,mapDispatchToProps)(App);
