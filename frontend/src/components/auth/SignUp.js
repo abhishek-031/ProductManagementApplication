@@ -67,7 +67,7 @@ class SignUp extends Component{
           <input name='password' placeholder='Password' type='password' value={this.state.password} required onChange={this.handleChange} /><br />
           <input name='confPassword' placeholder='Confirm Password' type='password' value={this.state.confPassword} required onChange={this.handleChange} /> <br/>
           { this.state.loading?
-          <button style={{margin:"0 36%"}} type='submit' disabled>Processing...</button>:
+          <button style={{margin:"0 36%"}} type='submit' disabled>Registering...</button>:
           <button style={{margin:"0 36%"}} type='submit'>SignUp</button>
           }
           {this.state.done?

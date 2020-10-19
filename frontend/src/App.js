@@ -16,6 +16,14 @@ class App extends React.Component {
     props.fetchProducts();
   }
 
+  editProduct = props => (
+    <EditProduct {...props} />
+  )
+
+  addProduct = props => (
+    <AddProduct {...props} />
+  )
+
   render(){
     const token = localStorage.getItem('auth-token');
     let loggedIn;
@@ -47,9 +55,11 @@ class App extends React.Component {
               { loggedIn? <Products />: <Redirect to='/login' />}
             </Route>
             <Route path='/addproduct' exact>
-              { loggedIn ? <AddProduct/>: <Redirect to='/login' />}
+              { loggedIn ? this.addProduct : <Redirect to='/login' />}
             </Route>
-            <Route path='/:id' exact component={EditProduct} />
+            <Route path='/:id' exact>
+              { loggedIn ? this.editProduct: <Redirect to='/login' />}
+            </Route>
           </Switch>
         </Router>
       </>

@@ -69,7 +69,7 @@ class LoginComponent extends Component{
           <input name='email' placeholder='Username' onChange={this.handleChange} required value={this.state.email} type='text' />
           <input name='password' placeholder='Password' required onChange={this.handleChange} value={this.state.password} type='password' />
           {this.state.loading?
-          <button type='submit' disabled>Processig...</button>:
+          <button type='submit' disabled>Logging in..</button>:
           <button type='submit'>Login</button>
           }
           {
